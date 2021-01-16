@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+      
+            gtag('config', 'UA-179039107-2');
+          </script>
+        <meta charset="utf-8">
+        <title>moves | 北大生の為の移行点計算サイト。移行点の仕組みを知らなくても計算できる！</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <link rel="stylesheet" href="style/style.css">
+        <link rel="icon" type="image/png" href="/img/favicon.png">
+        <meta name="twitter:card" content="summary">
+        <meta property="og:url" content="http://moves.html.xdomain.jp/" />
+        <meta property="og:title" content="moves(ムーブエス)" /> 
+        <meta property="og:description" content="movesは北大1年生の為の移行点計算サービスです。
+        講義の成績を入力すると各算出基準別で移行点を自動で計算してくれます。また移行点に必要な単位を
+        満たしているかも確認することが出来ます。" /> 
+        <meta property="og:image" content="http://moves.html.xdomain.jp/img/favicon.png" />
+        <meta name="twitter:image" content="http://moves.html.xdomain.jp/img/favicon.png" />
+    </head>
+    <body>
+        <header>
+            <h1><a href="./index.html">moves</a></h1>
+        </header>
+        <div class="index-contents">
+        <h2>movesとは</h2>
+        <p>
+            自分が受けた授業の成績を入力すると各算出基準で移行点を自動で出してくれます。
+            既に出た成績から移行点を求めたり、どれぐらい成績を取れば行きたい学部の移行点
+            を超えるかなどを調べる為にお使いください。また算出基準別にどの科目の単位が
+            足りていないのかも表示されるので参考にしてください。
+        </p>
+        <h2>使い方</h2>
+        <p>
+            <ol>
+                <li>1. 各講義の成績を入力する。表示されていない科目は追加ボタンを押して追加する。</li>
+                <li>2. 「移行点を計算する」ボタンを押すと結果が表示される。</li>
+                <li>
+                    3. 途中移行点は入力した科目のみで移行点を出した場合です。必須科目を入力していない場合は
+                    それを無視して移行点を出します。最終移行点は必須科目が入力されていない場合、その
+                    移行点を０として計算します。移行時に使われる移行点を知りたければ最終移行点
+                    をお使いください。
+                </li>
+                <li>
+                    4. テーブルの詳細にある表示を押すと、それに対応した算出基準で足りない講義と
+                    移行点に使われた講義の一覧が表示されます。
+                </li>
+            </ol>
+        </p>
+        <div class="index-to-calc-cover">
+            <button class="index-to-calc" onclick="location.href='./calc.html'">計算画面に移動</button>
+        </div>
+        
+        </div>
+        
+    </body>
+</html>

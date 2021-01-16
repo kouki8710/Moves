@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-179039107-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-179039107-2');
+    </script>
+    <title>moves | 計算</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:url" content="http://moves.html.xdomain.jp/" />
+    <meta property="og:title" content="moves(ムーブエス)" /> 
+    <meta property="og:description" content="movesは北大1年の為の移行点計算サービスです。
+    講義の成績を入力すると各算出基準別で移行点を自動で計算してくれます。また移行点に必要な単位を
+    満たしているかも確認することが出来ます。" /> 
+    <meta property="og:image" content="http://moves.html.xdomain.jp/img/favicon.png" />
+    <meta name="twitter:image" content="http://moves.html.xdomain.jp/img/favicon.png" />
+  </head>
+  <body>
+    <header>
+      <h1><a href="./index.html">moves</a></h1>
+    </header>
+    <div class="main">
+      <transition name="fade">
+      <div class="overlay" v-show="showpop" style="display: none;">
+        <div class="pop">
+          <p>講義名</p>
+          <div class="pop-select-lecturename">
+            <select v-model="addLecture.lecturename">
+            <option v-for="item in addData.addLectureList">{{item}}</option>
+            </select>
+          </div>
+          
+          <p>単位数</p>
+          <div class="pop-select-unit">
+            <select v-model="addLecture.unit">
+              <option value="1">1</option>
+              <option value="2">2</option>
+            </select>
+          </div>
+          
+          <div class="pop-btns">
+            <button @click="closeModal()">閉じる</button>
+            <button @click="addNewLecture()">追加</button>
+          </div>
+        </div>
+      </div>
+      </transition>
+      <div class="contents" v-show="seen">
+      <div>
+        <h2 class="subtitle">フレッシュマンセミナー</h2>
+        <lecture-list-fixed v-for="item in hure"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'0'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal" v-bind:addlecturedata="{category:'hure',lecture:['フレセミ']}"></btn-add>
+      </div>
+      <div>
+        <h2 class="subtitle">総合科目</h2>
+        <lecture-list-fixed v-for="item in sougou"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'1'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal" v-bind:addlecturedata="{category:'sougou',lecture:['総合科目']}"></btn-add>
+      </div>
+      <div>
+        <h2 class="subtitle">主題別科目</h2>
+        <lecture-list-fixed v-for="item in syudai"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'2'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal" v-bind:addlecturedata="{category:'syudai',lecture:['主題別科目']}"></btn-add>
+      </div>
+      <div>
+        <h2 class="subtitle">外国語科目</h2>
+        <lecture-list-fixed v-for="item in gaikamo"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'3'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal" v-bind:addlecturedata="{category:'gaikamo',lecture:['第２外国語Ⅰ','第２外国語Ⅱ']}"></btn-add>
+      </div>
+      <div>
+        <h2 class="subtitle">外国語演習</h2>
+        <lecture-list-fixed v-for="item in gaien"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'4'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal" v-bind:addlecturedata="{category:'gaien',lecture:['外国語演習(技能別を除く)']}"></btn-add>
+      </div>
+      <div>
+        <h2 class="subtitle">共通科目</h2>
+        <lecture-list-fixed v-for="item in kyoutuu"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'5'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal" v-bind:addlecturedata="{category:'kyoutuu',lecture:['体育学Ａ']}"></btn-add>
+      </div>
+      <div>
+        <h2 class="subtitle">基礎科目</h2>
+        <lecture-list-fixed v-for="item in kiso"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:category="'6'"></lecture-list-fixed>
+        <btn-add v-on:from-btnadd="showModal"　v-bind:addlecturedata="{category:'kiso',lecture:['人文・社会科学の基礎']}"></btn-add>
+      </div>
+      <div class="btn-calc-wrap">
+        <button class="btn-calc"　v-on:click="calcmoves()">移行点を計算する</button>
+      </div>
+      
+    </div>
+
+    <div v-show="!seen" class="contents">
+      <!-- <h2 class="head-yourms"></h2> -->
+      <div class="btn-tab">
+        <button v-on:click="tabchange('1')" 
+        v-bind:class="{'btn--selected':isActive == '1'}">途中移行点</button>
+        <button v-on:click="tabchange('2')"
+        v-bind:class="{'btn--selected':isActive == '2'}">最終移行点</button>
+      </div>
+
+      <div v-if="isActive === '1' " class="table-ms">
+        <h2>途中移行点</h2>
+        <table>
+          <tr>
+            <th colspan="2"class="base-table">算出基準</th>
+            <th class="msallunit-table">移行点/総単位</th>
+            <th class="detail-table">詳細</th>
+          </tr>
+          <tr>
+            <td colspan="2">文系学部</td>
+            <td>{{humanities.ms}} / {{humanities.unit}}</td>
+            <td><button v-on:click="showhistory('humanities')"
+              v-bind:class="{'btn--selected':genreselected == 'humanities'}">表示</button></td>
+          </tr>
+          <tr>
+            <td colspan="2">医学部を除く理系学部</td>
+            <td>{{science.ms}} / {{science.unit}}</td>
+            <td><button v-on:click="showhistory('science')"
+              v-bind:class="{'btn--selected':genreselected == 'science'}">表示</button></td>
+          </tr>
+          <tr>
+            <td colspan="2">医学部医学科</td>
+            <td>{{medician.ms}} / {{medician.unit}}</td>
+            <td><button v-on:click="showhistory('medicine')"
+              v-bind:class="{'btn--selected':genreselected == 'medicine'}">表示</button></td>
+          </tr>
+          <tr>
+            <td rowspan="2">医学部保健学科</td>
+            <td>放・検・理</td>
+            <td>{{health3.ms}} / {{health3.unit}}</td>
+            <td><button v-on:click="showhistory('health3')"
+              v-bind:class="{'btn--selected':genreselected == 'health3'}">表示</button></td>
+          </tr>
+          <tr>
+            <td>看・作</td>
+            <td>{{health2.ms}} / {{health2.unit}}</td>
+            <td><button v-on:click="showhistory('health2')"
+              v-bind:class="{'btn--selected':genreselected == 'health2'}">表示</button></td>
+          </tr>
+        </table>
+      </div>
+
+      <div v-else-if= "isActive === '2'" class="table-ms">
+        <h2>最終移行点</h2>
+        <table>
+          <tr>
+            <th colspan="2"class="base-table">算出基準</th>
+            <th class="msallunit-table">移行点/総単位</th>
+            <th class="detail-table">詳細</th>
+          </tr>
+          <tr>
+            <td colspan="2">文系学部</td>
+            <td>{{humanities.ms}} / {{humanities.unit}}</td>
+            <td><button v-on:click="showhistory('humanities')"
+              v-bind:class="{'btn--selected':genreselected == 'humanities'}">表示</button></td>
+          </tr>
+          <tr>
+            <td colspan="2">医学部を除く理系学部</td>
+            <td>{{science.ms}} / {{science.unit}}</td>
+            <td><button v-on:click="showhistory('science')"
+              v-bind:class="{'btn--selected':genreselected == 'science'}">表示</button></td>
+          </tr>
+          <tr>
+            <td colspan="2">医学部医学科</td>
+            <td>{{medician.ms}} / {{medician.unit}}</td>
+            <td><button v-on:click="showhistory('medicine')"
+              v-bind:class="{'btn--selected':genreselected == 'medicine'}">表示</button></td>
+          </tr>
+          <tr>
+            <td rowspan="2">医学部保健学科</td>
+            <td>放・検・理</td>
+            <td>{{health3.ms}} / {{health3.unit}}</td>
+            <td><button v-on:click="showhistory('health3')"
+              v-bind:class="{'btn--selected':genreselected == 'health3'}">表示</button></td>
+          </tr>
+          <tr>
+            <td>看・作</td>
+            <td>{{health2.ms}} / {{health2.unit}}</td>
+            <td><button v-on:click="showhistory('health2')"
+              v-bind:class="{'btn--selected':genreselected == 'health2'}">表示</button></td>
+          </tr>
+        </table>
+      </div>
+      <div class="detail-show_history">
+        <h2>詳細 -- {{genreselected_japanese}} --</h2>
+        <p>移行点に足りない科目を表示します。</p>
+        <show-needlecture v-for="item in needLecture"
+        v-bind:genre="item.genre"
+        v-bind:needunit="item.needunit"></show-needlecture>
+        <p>移行点に入った講義一覧を表示します。</p>
+        <show-history v-for="item in history"
+        v-bind:lecturename="item.lecturename"
+        v-bind:unit="item.unit"
+        v-bind:grade="item.grade"></show-history>
+      </div>
+      <div class="btn-calc-wrap">
+        <button class="btn-calc" v-on:click="seenchange()">戻る</button>
+      </div>
+      
+    
+    </div>
+    </div>
+    
+    <script src="js/calc.js"></script>
+    <script src="js/main.js"></script>
+    
+  </body>
+</html>
